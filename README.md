@@ -48,22 +48,22 @@ However, when you are done manipulating the files, you need to wipe the token fo
 
 ```cpp
   // 1. create an encrypted file
-  vault::create("vault.bin", "Qwerty123!", mySensistiveData);
+  vault::create("vault.bin", "Qwerty123!", mySensitiveData);
   
   // 2. read the encrypted file later (assuming user has entered its password)
-  auto mySensistiveData = vault::read("vault.bin", "Qwerty123!");
+  auto mySensitiveData = vault::read("vault.bin", "Qwerty123!");
 ```
 
 Alternatively, if you need accessing the encrypted files many times during the application's
 lifetime and you don't want retaining the user's password in memory, consider using the token as following:
 ```
    // 1. create an encrypted file, receive the token and keep it in memory
-   auto token = vault::create("vault.bin", "Qwerty123!", mySensistiveData);
+   auto token = vault::create("vault.bin", "Qwerty123!", mySensitiveData);
    
-   // 2. update file if needed at any time if needed
-   vault::create("vault.bin", token, myUpdatedSensistiveData);
+   // 2. update file if needed at any time
+   vault::create("vault.bin", token, myUpdatedSensitiveData);
    
-   // 3. read the sensitive content without prompting user to enter password
+   // 3. now read the sensitive content using token (no password prompt)
    auto myData = vault::read("vault.bin", token);
 ```
 
