@@ -39,7 +39,7 @@ TEST(VaultTest, ReadWithWrongPasswordTest) {
     auto token = vault::create("vault.bin", "password", contents);
     EXPECT_FALSE(token.empty());
 
-    EXPECT_THROW(vault::read("vault.bin", "wrong password"), std::logic_error);
+    EXPECT_THROW(vault::read("vault.bin", "wrong password"), std::runtime_error);
 }
 
 TEST(VaultTest, ReadWithWrongTokenTest) {
@@ -49,5 +49,5 @@ TEST(VaultTest, ReadWithWrongTokenTest) {
     EXPECT_FALSE(token.empty());
 
     std::reverse(std::begin(token), std::end(token));
-    EXPECT_THROW(vault::read("vault.bin", token), std::logic_error);
+    EXPECT_THROW(vault::read("vault.bin", token), std::runtime_error);
 }

@@ -16,7 +16,7 @@ blob_t vault::encode_token(const Authentication &authentication,
     size_t size = token.ByteSizeLong();
     blob_t buffer(size);
     if (!token.SerializeToArray(buffer.data(), (int)size)) {
-        throw std::logic_error("failed to encode token");
+        throw std::runtime_error("failed to encode token");
     }
 
     return buffer;
@@ -29,7 +29,7 @@ void vault::decode_token(const blob_t &data,
 {
     Token token;
     if (!token.ParseFromArray(data.data(), (int)data.size())) {
-        throw std::logic_error("failed to decode token");
+        throw std::runtime_error("failed to decode token");
     }
     authentication = token.authentication();
     aes_key = blob_t(token.aes_key().begin(), token.aes_key().end());

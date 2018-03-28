@@ -53,7 +53,7 @@ token_t vault::create(const string &path, const string &password, const userdata
 
     fstream file(path, ios::out | ios::binary | ios::trunc);
     if (!store.SerializeToOstream(&file)) {
-        throw logic_error("vault data serialization failed");
+        throw runtime_error("vault data serialization failed");
     }
 
     return encode_token(*authentication, aes_key, aes_iv);
@@ -71,7 +71,7 @@ userdata_t vault::read(const string &path, const string &password, token_t *toke
     blob_t secret = generate_secret(password, salt, store.authentication().iterations(), secret_size);
     blob_t mac = calc_hmac(secret, HMAC_KEY_SIZE);
     if (mac != hmac) {
-        throw logic_error("wrong password");
+        throw runtime_error("wrong password");
     }
 
     blob_t aes_key(secret.begin(), secret.begin() + AES_KEY_SIZE);
@@ -89,7 +89,7 @@ userdata_t vault::read(const string &path, const token_t &token)
     Store store;
     fstream file(path, ios::in | ios::binary);
     if (!store.ParseFromIstream(&file)) {
-        throw logic_error("failed to decode vault file");
+        throw runtime_error("failed to decode vault file");
     }
 
     Authentication _authentication;
@@ -112,12 +112,12 @@ void vault::update(const string &path, const token_t &token, const userdata_t &u
     Store store;
     fstream ifile(path, ios::in | ios::binary);
     if (!store.ParseFromIstream(&ifile)) {
-        throw logic_error("failed to decode vault file");
+        throw runtime_error("failed to decode vault file");
     }
     store.set_contents(encrypted.data(), encrypted.size());
 
     fstream ofile(path, ios::out | ios::binary | ios::trunc);
     if (!store.SerializeToOstream(&ofile)) {
-        throw logic_error("failed to encode vault file");
+        throw runtime_error("failed to encode vault file");
     }
 }

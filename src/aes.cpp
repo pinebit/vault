@@ -6,56 +6,42 @@
 
 using namespace vault;
 
-blob_t vault::encrypt(const blob_t &data, const blob_t &key, const blob_t &iv)
+static blob_t run_evp_cipher(const blob_t &input, const blob_t &key, const blob_t &iv, int enc)
 {
     auto ctx = EVP_CIPHER_CTX_new();
     assert(ctx);
 
-    if (1 != EVP_CipherInit_ex(ctx, EVP_aes_256_cbc(), nullptr, nullptr, nullptr, 1) ||
+    if (1 != EVP_CipherInit_ex(ctx, EVP_aes_256_cbc(), nullptr, nullptr, nullptr, enc) ||
         EVP_CIPHER_CTX_key_length(ctx) != key.size() ||
         EVP_CIPHER_CTX_iv_length(ctx) != iv.size()) {
-        throw std::logic_error("wrong encryption parameters");
+        throw std::runtime_error("wrong AES cipher parameters");
     }
 
-    blob_t encrypted;
-    blob_t buffer(data.size() + EVP_MAX_BLOCK_LENGTH, '\0');
+    blob_t output;
+    blob_t buffer(input.size() + EVP_MAX_BLOCK_LENGTH, '\0');
 
-    if (1 == EVP_CipherInit_ex(ctx, nullptr, nullptr, key.data(), iv.data(), 1)) {
+    if (1 == EVP_CipherInit_ex(ctx, nullptr, nullptr, key.data(), iv.data(), enc)) {
         int len = 0;
-        if (1 == EVP_CipherUpdate(ctx, buffer.data(), &len, data.data(), (int)data.size())) {
+        if (1 == EVP_CipherUpdate(ctx, buffer.data(), &len, input.data(), (int)input.size())) {
             int buffer_size = len;
             if (1 == EVP_CipherFinal_ex(ctx, buffer.data() + len, &len)) {
                 buffer_size += len;
-                encrypted.resize((size_t)buffer_size);
-                std::copy(buffer.begin(), buffer.begin() + buffer_size, encrypted.begin());
+                output.resize((size_t)buffer_size);
+                std::copy(buffer.begin(), buffer.begin() + buffer_size, output.begin());
             }
         }
     }
 
     EVP_CIPHER_CTX_free(ctx);
-    return encrypted;
+    return output;
+}
+
+blob_t vault::encrypt(const blob_t &data, const blob_t &key, const blob_t &iv)
+{
+    return run_evp_cipher(data, key, iv, 1);
 }
 
 blob_t vault::decrypt(const blob_t &data, const blob_t &key, const blob_t &iv)
 {
-    auto ctx = EVP_CIPHER_CTX_new();
-    assert(ctx);
-
-    blob_t decrypted;
-    blob_t buffer(data.size(), '\0');
-    int outlen = 0, tmplen = 0;
-
-    if (1 == EVP_CipherInit_ex(ctx, EVP_aes_256_cbc(), nullptr, key.data(), iv.data(), 0)) {
-        if (1 == EVP_CipherUpdate(ctx, buffer.data(), &outlen, data.data(), (int)data.size())) {
-            if (1 == EVP_CipherFinal_ex(ctx, buffer.data() + outlen, &tmplen)) {
-                outlen += tmplen;
-                decrypted.resize((size_t)outlen);
-                std::copy(buffer.begin(), buffer.begin() + outlen, decrypted.begin());
-            }
-        }
-    }
-
-    EVP_CIPHER_CTX_free(ctx);
-    return decrypted;
+    return run_evp_cipher(data, key, iv, 0);
 }
-
