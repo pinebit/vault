@@ -17,13 +17,13 @@ namespace vault {
     token_t create(const std::string &path, const std::string &password, const userdata_t &userdata);
 
     // Reads and decrypts the encrypted file protected with the password.
-    // If a wrong password specified, this throws logic_error exception.
+    // If a wrong password is specified, this throws runtime_error exception.
     userdata_t read(const std::string &path, const std::string &password, token_t *token = nullptr);
 
-    // Reads and decrypts the encrypted file using the token instead of password.
+    // Reads and decrypts the encrypted file using the token instead of a password.
     userdata_t read(const std::string &path, const token_t &token);
 
-    // Updates the encrypted file contents using the token instead of password.
+    // Updates the encrypted file contents using the token instead of a password.
     void update(const std::string &path, const token_t &token, const userdata_t &userdata);
 
 }
