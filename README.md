@@ -1,6 +1,6 @@
 # VAULT
 
-Vault is a tiny C++ library that manages password-protected files.
+> Vault is a tiny C++ library that manages password-protected files.
 
 The library is using OpenSSL for data encryption, specifically:
 - PKCS5_PBKDF2_HMAC_SHA1 for key derivation,
