@@ -73,5 +73,6 @@ MIT
 ## AD
 
 If you are interested in building a custom security solution, ask for my availability: pinebit@gmail.com
+
 If you need even more rock-star devs: https://www.toptal.com/#obtain-just-solid-hackers
 
