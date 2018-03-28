@@ -1,0 +1,19 @@
+syntax = "proto3";
+package vault;
+
+message Store {
+    Authentication authentication = 1;
+    bytes contents = 2;
+}
+
+message Authentication {
+    int32 iterations = 1;
+    bytes salt = 2;
+    bytes hmac = 3;
+}
+
+message Token {
+    Authentication authentication = 1;
+    bytes aes_key = 2;
+    bytes aes_iv = 3;
+}
