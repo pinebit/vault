@@ -71,9 +71,4 @@ lifetime and you don't want retaining the user's password in memory, consider us
 
 MIT
 
-## AD
-
-If you are interested in building a custom security solution, ask me how: pinebit@gmail.com
-
-If you need even more rock-star devs: https://www.toptal.com/#obtain-just-solid-hackers
 
